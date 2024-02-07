@@ -4,10 +4,7 @@ import { animate, motion, useMotionValue } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
-  let [duration, setDuration] = useState(0.8); // max of 10
-  let [bounce, setBounce] = useState(0.25); // [0, 1]
-
-  let [damping, setDamping] = useState(10); // 0 is infinite
+  let [damping, setDamping] = useState(10);
   let [mass, setMass] = useState(1);
   let [stiffness, setStiffness] = useState(100);
 
@@ -17,28 +14,14 @@ export default function Home() {
   useInterval(() => {
     setLeft(-1 * left);
     x.stop();
-    // animate(x, left * 100, { type: "spring", bounce });
-    animate(x, left * 100, { type: "spring", damping, mass, stiffness });
+    animate(x, left * 200, { type: "spring", damping, mass, stiffness });
   }, 1250);
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center">
-      <motion.div
-        style={{ x }}
-        transition={{ type: "spring", bounce, repeat: Infinity }}
-        className="size-10 rounded-full bg-sky-500"
-      />
+      <motion.div style={{ x }} className="size-10 rounded-full bg-sky-500" />
 
       <div className="mt-10">
-        {/* <p>Bounce: {bounce}</p>
-        <input
-          min={0}
-          max={1}
-          step={0.1}
-          value={bounce}
-          onChange={(e) => setBounce(+e.target.value)}
-          type="range"
-        /> */}
         <p>Damping: {damping}</p>
         <input
           min={0}
@@ -67,7 +50,7 @@ export default function Home() {
         />
       </div>
 
-      <div className="mt-10 flex flex-wrap gap-2">
+      <div className="mt-10 flex flex-wrap justify-center gap-2">
         <button
           className="rounded border-t border-gray-600 bg-gray-700 px-3 py-1 font-medium"
           onClick={() => {
@@ -184,7 +167,7 @@ export default function Home() {
 }
 
 function useInterval(callback: () => void, delay: number) {
-  const intervalRef = useRef(null);
+  const intervalRef = useRef<number>();
   const savedCallback = useRef(callback);
 
   useEffect(() => {
@@ -193,8 +176,10 @@ function useInterval(callback: () => void, delay: number) {
 
   useEffect(() => {
     const tick = () => savedCallback.current();
+
     if (typeof delay === "number") {
       intervalRef.current = window.setInterval(tick, delay);
+
       return () => window.clearInterval(intervalRef.current);
     }
   }, [delay]);
